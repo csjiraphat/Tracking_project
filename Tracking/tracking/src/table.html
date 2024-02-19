@@ -1,0 +1,92 @@
+<table style="border:  solid black">
+
+    <tr>
+        <th>Period</th>
+        <th>Position</th>
+        <th>Organization</th>
+    </tr>
+    <tr>
+        <td>พ.ศ. 2560 – ปัจจุบัน</td>
+        <td>อาจารย์ประจำโปรแกรมวิชาวิทยาการคอมพิวเตอร์ </td>
+        <td>สำนักวิชาคอมพิวเตอร์และเทคโนโลยีสารสนเทศ มหาวิทยาลัยราชภัฏเชียงราย</td>
+    </tr>
+    <tr>
+        <td>พ.ศ. 2558 – 2560</td>
+        <td>ประธานโปรแกรมวิชาวิทยาการคอมพิวเตอร์</td>
+        <td>สำนักวิชาคอมพิวเตอร์และเทคโนโลยีสารสนเทศ มหาวิทยาลัยราชภัฏเชียงราย</td>
+    </tr>
+    <tr>
+        <td>พ.ศ. 2556 – 2557</td>
+        <td>ประธานโปรแกรมวิชาวิทยาการคอมพิวเตอร์และเทคโนโลยีสารสนเทศ </td>
+
+        <td>สำนักวิชาคอมพิวเตอร์และเทคโนโลยีสารสนเทศ มหาวิทยาลัยราชภัฏเชียงราย</td>
+    </tr>
+    <tr>
+        <td>พ.ศ. 2540 – 2555</td>
+        <td>อาจารย์ประจำโปรแกรมวิชาวิทยาการคอมพิวเตอร์ </td>
+
+        <td>คณะวิทยาศาสตร์และเทคโนโลยี มหาวิทยาลัยราชภัฏเชียงราย</td>
+    </tr>
+</table>
+<?php
+
+// Replace with your own database connection details
+$servername = "localhost";
+$username = "username";
+$password = "password";
+$dbname = "dbname";
+
+// Create connection
+$conn = new mysqli($servername, $username, $password, $dbname);
+
+// Check connection
+if ($conn->connect_error) {
+    die("Connection failed: " . $conn->connect_error);
+}
+
+// SQL query to select data from place and comment tables
+$sql = "SELECT place.*, comment.*
+        FROM place
+        INNER JOIN comment ON place.id = comment.id";
+
+$result = $conn->query($sql);
+
+if ($result->num_rows > 0) {
+    // Array to store the response
+    $response = array();
+    
+    // Loop through the result set
+    while ($row = $result->fetch_assoc()) {
+        // Create a new object for each row
+        $place = array(
+            'id' => $row['id'],
+            'place_name' => $row['place_name'],
+            // Add other place columns as needed
+        );
+        
+        $comment = array(
+            'id' => $row['id'],
+            'comment_text' => $row['comment_text'],
+            // Add other comment columns as needed
+        );
+        
+        // Add the place and comment objects to the response array
+        $response[] = array(
+            'place' => $place,
+            'comment' => $comment
+        );
+    }
+} else {
+    // No records found
+    $response = array(
+        'status' => 'error',
+        'message' => 'No records found'
+    );
+}
+
+// Convert the response array to JSON and output it
+echo json_encode($response);
+
+$conn->close();
+
+?>
